@@ -20,6 +20,30 @@ def select_word(level):
     else:
         raise ValueError("Invalid level selected")
 
+#This function handles the input from the player
+def get_user_input(char_check):
+    while True:
+        guess = input("Please type in a letter: ").strip().lower()
+
+        if guess == "":
+            print("Did you forget something? :o\n")
+            continue
+
+        if len(guess) > 1:
+            print("Type ONE letter please.\n")
+            continue
+
+        if not guess.isalpha():
+            print("Only letters are allowed!\n")
+            continue
+
+        if guess in char_check:
+            print("That letter has been used already!\n")
+            continue
+
+        # valid guess
+        char_check.append(guess)
+        return guess
 
 #This function operates the main part of the game. Based on the level choosed by the user, it will fetch a word from one of the two lists and prompt the user to guess each letter until the word is completed or there are no tries left.
 def GuessGame():
@@ -34,25 +58,7 @@ def GuessGame():
         #This is the error trapping part, for when the user: presses enter, types two or more letters, types a number or types a character that has already been evaluated.
         char_check=[]
         while tries!=0:
-            i=True
-            while i==True :
-                guess=input("Please type in a letter:").strip()
-                if guess=="":
-                    print("Did you forget something? :o\n")
-                elif len(guess)>1:
-                    print("Type ONE letter please.\n")
-                elif not guess.isalpha():
-                    print("Only letters are allowed!\n")
-                else:
-                    i=False
-                    guess=guess.lower()
-                    while True:
-                        if guess in char_check:
-                            print("That letter has been used already!\n")
-                            guess=input("Please type in a letter:").lower()
-                        else:
-                            char_check.append(guess)
-                            break
+            guess = get_user_input(char_check)
             #In this part the user's letter is being compared to each letter of the word and if there is a correspondence the letter is unveiled, else a message is being displayed and the number of tries reduces by one. This goes on until the word is guessed or the are no tries left.
             for i in range(len(word)):
                 if word[i]==guess:
@@ -82,26 +88,7 @@ def GuessGame():
         tries=10
         char_check=[]
         while tries!=0:
-            i=True
-            while i==True :
-                guess=input("Please type in a letter:").strip()
-                if guess=="":
-                    print("Did you forget something? :o\n")
-                elif len(guess)>1:
-                    print("Type ONE letter please.\n")
-                elif not guess.isalpha():
-                    print("Only letters are allowed!\n")
-                else:
-                    i=False
-                    guess=guess.lower()
-                    while True:
-                        if guess in char_check:
-                            print("That letter has been used already!\n")
-                            guess=input("Please type in a letter:").lower()
-                        else:
-                            char_check.append(guess)
-                            break
-
+            guess = get_user_input(char_check)
             for i in range(len(word)):
                 if word[i]==guess:
                     word_display=word_display[0:i]+guess+word_display[i+1:]
