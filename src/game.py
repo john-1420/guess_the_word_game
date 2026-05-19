@@ -69,7 +69,7 @@ def update_display(word_display):
     print("\n", " ".join(word_display))
 
 #This function operates the main part of the game. Based on the level choosed by the user, it will fetch a word from one of the two lists and prompt the user to guess each letter until the word is completed or there are no tries left.
-def GuessGame():
+def GuessGame(level):
     #It runs when level==1. Essentially it chooses a random word from a list (normalGame) and display it for the user two see how many charecters there are, and set the tries to 10.
     if level==1 :
         word = select_word(level)
@@ -177,7 +177,7 @@ while play_again=="y":
     if level==1 or level==2 :
         print("\nAlright! Let's start!")
 
-    GuessGame()
+    GuessGame(level)
 
     time.sleep(3)
 
