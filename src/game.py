@@ -1,14 +1,31 @@
 #In this program the user is required to guess every letter of a given unknown word.
 #Date: 23/03/2023
 #Written by: John Razak
+#Updated: 19/05/2026
 #=============================================
+
+import time
+import random
+
+#This function returns a word based on the level the user selected.
+def select_word(level):
+    #Creating two lists with the words for the game.
+    normal_words = ["weak", "head", "burial", "tip", "chorus", "page", "mark", "score"]
+    advanced_words = ["bike", "innovation", "up", "abolish", "iron", "floor", "economist", "stain"]
+
+    if level == 1:
+        return random.choice(normal_words)
+    elif level == 2:
+        return random.choice(advanced_words)
+    else:
+        raise ValueError("Invalid level selected")
+
 
 #This function operates the main part of the game. Based on the level choosed by the user, it will fetch a word from one of the two lists and prompt the user to guess each letter until the word is completed or there are no tries left.
 def GuessGame():
     #It runs when level==1. Essentially it chooses a random word from a list (normalGame) and display it for the user two see how many charecters there are, and set the tries to 10.
     if level==1 :
-        import random
-        word=random.choice(normalGame)
+        word = select_word(level)
         word_display=""
         for letter in word:
             word_display=word_display +"_"
@@ -57,8 +74,7 @@ def GuessGame():
 
     #It runs when level==2. It works just like when level==1, only difference being the word is being fetched from a different list (advanceGame).
     elif level==2 :
-        import random
-        word=random.choice(advancedGame)
+        word = select_word(level)
         word_display=""
         for letter in word:
             word_display=word_display +"_"
@@ -107,15 +123,6 @@ def GuessGame():
     else:
         #Error trapping for when the user does not select any of the available levels.
         print("Ooops! You didn't select any of the available levels!")
-
-
-
-import time
-
-#Creating two lists with the words for the game.
-normalGame=["weak", "head", "burial", "tip", "chorus", "page", "mark", "score"]
-
-advancedGame=["bike", "innovation", "up", "abolish", "iron", "floor", "economist", "stain"]
 
 #Prints a welcome message.
 print("Hello there! This is the ##GUESS THE WORD## game! Hope you enjoy it! ;)\n")
