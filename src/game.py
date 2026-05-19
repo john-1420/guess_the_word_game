@@ -20,7 +20,7 @@ def select_word(level):
     else:
         raise ValueError("Invalid level selected")
 
-#This function handles the input from the player
+#This function handles the error trapping part, for when the user: presses enter, types two or more letters, types a number or types a character that has already been evaluated.
 def get_user_input(char_check):
     while True:
         guess = input("Please type in a letter: ").strip().lower()
@@ -45,6 +45,25 @@ def get_user_input(char_check):
         char_check.append(guess)
         return guess
 
+#This function checks if the guess was correct or not and it returns the word to be displayed, the number of tries and a boolean for if the word has been guessed.
+def check_guess(guess, word, word_display, tries):
+    correct = False
+
+    # Reveal letters
+    new_display = list(word_display)
+    for i, letter in enumerate(word):
+        if letter == guess:
+            new_display[i] = guess
+            correct = True
+
+    updated_display = "".join(new_display)
+
+    # If incorrect, reduce tries
+    if not correct:
+        tries -= 1
+
+    return updated_display, tries, correct
+
 #This function operates the main part of the game. Based on the level choosed by the user, it will fetch a word from one of the two lists and prompt the user to guess each letter until the word is completed or there are no tries left.
 def GuessGame():
     #It runs when level==1. Essentially it chooses a random word from a list (normalGame) and display it for the user two see how many charecters there are, and set the tries to 10.
@@ -55,29 +74,23 @@ def GuessGame():
             word_display=word_display +"_"
         print(" ".join(word_display))
         tries=10
-        #This is the error trapping part, for when the user: presses enter, types two or more letters, types a number or types a character that has already been evaluated.
         char_check=[]
         while tries!=0:
             guess = get_user_input(char_check)
             #In this part the user's letter is being compared to each letter of the word and if there is a correspondence the letter is unveiled, else a message is being displayed and the number of tries reduces by one. This goes on until the word is guessed or the are no tries left.
-            for i in range(len(word)):
-                if word[i]==guess:
-                    word_display=word_display[0:i]+guess+word_display[i+1:]
-            if guess not in word:
-                tries=tries-1
-                if tries>0:
+            word_display, tries, correct = check_guess(guess, word, word_display, tries)
+            if not correct:
+                if tries > 0:
                     print("Try again. You have,", tries, "tries left")
                 else:
-                    time.sleep(2)
-                    print("\nSorry, no lives left. The word was, ", word, ". Better luck next time! :(")
+                    print("\nSorry, no lives left. The word was,", word)
                     break
-            if word_display==word:
-                print("\nThe word is, ", word, "!")
-                time.sleep(2)
-                print("Well done! :)")
-                break
+            else:
+                if word_display == word:
+                    print("\nThe word is,", word, "!")
+                    print("Well done! :)")
+                    break
             print("\n", " ".join(word_display))
-
     #It runs when level==2. It works just like when level==1, only difference being the word is being fetched from a different list (advanceGame).
     elif level==2 :
         word = select_word(level)
@@ -89,24 +102,20 @@ def GuessGame():
         char_check=[]
         while tries!=0:
             guess = get_user_input(char_check)
-            for i in range(len(word)):
-                if word[i]==guess:
-                    word_display=word_display[0:i]+guess+word_display[i+1:]
-            if guess not in word:
-                tries=tries-1
-                if tries>0:
+            #In this part the user's letter is being compared to each letter of the word and if there is a correspondence the letter is unveiled, else a message is being displayed and the number of tries reduces by one. This goes on until the word is guessed or the are no tries left.
+            word_display, tries, correct = check_guess(guess, word, word_display, tries)
+            if not correct:
+                if tries > 0:
                     print("Try again. You have,", tries, "tries left")
                 else:
-                    time.sleep(2)
-                    print("\nSorry, no lives left. The word was, ", word,". Better luck next time! :(")
+                    print("\nSorry, no lives left. The word was,", word)
                     break
-            if word_display==word:
-                print("\nThe word is, ", word, "!")
-                time.sleep(2)
-                print("Well done! :)")
-                break
-            print("\n"," ".join(word_display))
-
+            else:
+                if word_display == word:
+                    print("\nThe word is,", word, "!")
+                    print("Well done! :)")
+                    break
+            print("\n", " ".join(word_display))
     else:
         #Error trapping for when the user does not select any of the available levels.
         print("Ooops! You didn't select any of the available levels!")
