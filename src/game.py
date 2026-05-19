@@ -11,6 +11,19 @@ from pathlib import Path
 
 #This function returns a word based on the level the user selected.
 def select_word(level):
+    """
+    Select a random word based on the chosen difficulty level.
+
+    Args:
+        level (int): Difficulty level selected by the user (1 = normal, 2 = advanced).
+
+    Returns:
+        str: A randomly selected word from the appropriate word list.
+
+    Raises:
+        ValueError: If an invalid level is provided.
+    """
+
     # Load JSON file
     data_path = Path(__file__).parent.parent / "data" / "words.json"
     with open(data_path, "r") as f:
@@ -25,6 +38,22 @@ def select_word(level):
 
 #This function handles the error trapping part, for when the user: presses enter, types two or more letters, types a number or types a character that has already been evaluated.
 def get_user_input(char_check):
+    """
+    Prompt the user for a single valid letter guess.
+
+    Ensures the input is:
+    - non-empty
+    - a single character
+    - alphabetic
+    - not previously guessed
+
+    Args:
+        char_check (list[str]): List of letters already guessed.
+
+    Returns:
+        str: A validated lowercase letter.
+    """
+
     while True:
         guess = input("Please type in a letter: ").strip().lower()
 
@@ -50,6 +79,22 @@ def get_user_input(char_check):
 
 #This function checks if the guess was correct or not and it returns the word to be displayed, the number of tries and a boolean for if the word has been guessed.
 def check_guess(guess, word, word_display, tries):
+    """
+    Evaluate the user's guess and update the game state.
+
+    Args:
+        guess (str): The letter guessed by the user.
+        word (str): The target word to guess.
+        word_display (str): The current display string with revealed letters.
+        tries (int): Number of remaining attempts.
+
+    Returns:
+        tuple:
+            str: Updated display string.
+            int: Updated number of tries.
+            bool: True if the guess was correct, False otherwise.
+    """
+
     correct = False
 
     # Reveal letters
@@ -69,10 +114,31 @@ def check_guess(guess, word, word_display, tries):
 
 #This function prints the updated word after the guess has been made
 def update_display(word_display):
+    """
+    Display the current state of the word to the user.
+
+    Args:
+        word_display (str): The string showing revealed and hidden letters.
+    """
+
     print("\n", " ".join(word_display))
 
 #This function operates the main part of the game. Based on the level choosed by the user, it will fetch a word from one of the two lists and prompt the user to guess each letter until the word is completed or there are no tries left.
 def GuessGame(level):
+    """
+    Run a full round of the Guess The Word game.
+
+    Handles:
+    - word selection
+    - user input loop
+    - guess checking
+    - display updates
+    - win/lose conditions
+
+    Args:
+        level (int): Difficulty level selected by the user.
+    """
+
     #It runs when level==1. Essentially it chooses a random word from a list (normalGame) and display it for the user two see how many charecters there are, and set the tries to 10.
     if level==1 :
         word = select_word(level)
