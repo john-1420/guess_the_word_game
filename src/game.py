@@ -36,6 +36,36 @@ def select_word(level):
     else:
         raise ValueError("Invalid level selected")
 
+def validate_guess(guess, char_check):
+    """
+    Validate a guessed character without requiring user input.
+    Used for automated testing.
+
+    Args:
+        guess (str): The raw user input.
+        char_check (list[str]): Letters already guessed.
+
+    Returns:
+        tuple:
+            bool: True if valid, False otherwise.
+            str: Error message or cleaned guess.
+    """
+    guess = guess.strip().lower()
+
+    if guess == "":
+        return False, "empty"
+
+    if len(guess) > 1:
+        return False, "multiple"
+
+    if not guess.isalpha():
+        return False, "nonalpha"
+
+    if guess in char_check:
+        return False, "repeat"
+
+    return True, guess
+
 #This function handles the error trapping part, for when the user: presses enter, types two or more letters, types a number or types a character that has already been evaluated.
 def get_user_input(char_check):
     """
@@ -57,25 +87,22 @@ def get_user_input(char_check):
     while True:
         guess = input("Please type in a letter: ").strip().lower()
 
-        if guess == "":
-            print("Did you forget something? :o\n")
-            continue
+        valid, result = validate_guess(guess, char_check)
 
-        if len(guess) > 1:
-            print("Type ONE letter please.\n")
-            continue
-
-        if not guess.isalpha():
-            print("Only letters are allowed!\n")
-            continue
-
-        if guess in char_check:
-            print("That letter has been used already!\n")
+        if not valid:
+            if result == "empty":
+                print("Did you forget something? :o\n")
+            elif result == "multiple":
+                print("Type ONE letter please.\n")
+            elif result == "nonalpha":
+                print("Only letters are allowed!\n")
+            elif result == "repeat":
+                print("That letter has been used already!\n")
             continue
 
         # valid guess
-        char_check.append(guess)
-        return guess
+        char_check.append(result)
+        return result
 
 #This function checks if the guess was correct or not and it returns the word to be displayed, the number of tries and a boolean for if the word has been guessed.
 def check_guess(guess, word, word_display, tries):
@@ -193,65 +220,69 @@ def GuessGame(level):
         #Error trapping for when the user does not select any of the available levels.
         print("Ooops! You didn't select any of the available levels!")
 
-#Prints a welcome message.
-print("Hello there! This is the ##GUESS THE WORD## game! Hope you enjoy it! ;)\n")
+def main():
+    #Prints a welcome message.
+    print("Hello there! This is the ##GUESS THE WORD## game! Hope you enjoy it! ;)\n")
 
-time.sleep(2)
+    time.sleep(2)
 
-print("Now..Let's get to know you better, shall we?\n")
+    print("Now..Let's get to know you better, shall we?\n")
 
-#Accepts a name from the user.
-name=input("How shall I call you?")
+    #Accepts a name from the user.
+    name=input("How shall I call you?")
 
-time.sleep(2)
+    time.sleep(2)
 
-print("\nNice to meet you", name, "!\n")
+    print("\nNice to meet you", name, "!\n")
 
-time.sleep(2)
+    time.sleep(2)
 
-#Prints the rules of the game.
-print(
-"""
+    #Prints the rules of the game.
+    print(
+    """
 
-        Available levels for you to play:
+            Available levels for you to play:
 
-          PRESS 1 OR 2 ON THE KEYBOARD
+            PRESS 1 OR 2 ON THE KEYBOARD
 
-    [1]=NORMAL: You will have to guess a word that can
-              have up to 8 characters.
+        [1]=NORMAL: You will have to guess a word that can
+                have up to 8 characters.
 
-    [2]=ADVANCE: You will have to guess a word that can
-               have up to 10 characters.
+        [2]=ADVANCE: You will have to guess a word that can
+                have up to 10 characters.
 
-    ##ATTENTION! You will have only 10 attempts
-              to guess each letter of the word.##
+        ##ATTENTION! You will have only 10 attempts
+                to guess each letter of the word.##
 
 
-                                           """)
-
-time.sleep(3)
-#Setting a loop to enable the user to play multiple times.
-play_again="y"
-while play_again=="y":
-
-    #Error trapping for when the user does not type a digit.
-    while True:
-        try:
-            level=int(input("Which level do you want to play? [1] or [2]"))
-            break
-        except ValueError:
-            print("Please type either 1 or 2.\n")
-
-    #Prints a message to the screen when the condition is met and makes a function call, starting the game.
-    if level==1 or level==2 :
-        print("\nAlright! Let's start!")
-
-    GuessGame(level)
+                                            """)
 
     time.sleep(3)
+    #Setting a loop to enable the user to play multiple times.
+    play_again="y"
+    while play_again=="y":
 
-    #Prompts the user to choose wether to continue playing or to exit.
-    play_again=input("\nDo you want to continue? (Y or any key to exit):\n")
-    play_again=play_again.lower()
+        #Error trapping for when the user does not type a digit.
+        while True:
+            try:
+                level=int(input("Which level do you want to play? [1] or [2]"))
+                break
+            except ValueError:
+                print("Please type either 1 or 2.\n")
 
-print("Thanks for playing! :)")
+        #Prints a message to the screen when the condition is met and makes a function call, starting the game.
+        if level==1 or level==2 :
+            print("\nAlright! Let's start!")
+
+        GuessGame(level)
+
+        time.sleep(3)
+
+        #Prompts the user to choose wether to continue playing or to exit.
+        play_again=input("\nDo you want to continue? (Y or any key to exit):\n")
+        play_again=play_again.lower()
+
+    print("Thanks for playing! :)")
+
+if __name__ == "__main__":
+    main()
