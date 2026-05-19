@@ -64,6 +64,10 @@ def check_guess(guess, word, word_display, tries):
 
     return updated_display, tries, correct
 
+#This function prints the updated word after the guess has been made
+def update_display(word_display):
+    print("\n", " ".join(word_display))
+
 #This function operates the main part of the game. Based on the level choosed by the user, it will fetch a word from one of the two lists and prompt the user to guess each letter until the word is completed or there are no tries left.
 def GuessGame():
     #It runs when level==1. Essentially it chooses a random word from a list (normalGame) and display it for the user two see how many charecters there are, and set the tries to 10.
@@ -72,7 +76,7 @@ def GuessGame():
         word_display=""
         for letter in word:
             word_display=word_display +"_"
-        print(" ".join(word_display))
+        update_display(word_display)
         tries=10
         char_check=[]
         while tries!=0:
@@ -90,14 +94,14 @@ def GuessGame():
                     print("\nThe word is,", word, "!")
                     print("Well done! :)")
                     break
-            print("\n", " ".join(word_display))
+            update_display(word_display)
     #It runs when level==2. It works just like when level==1, only difference being the word is being fetched from a different list (advanceGame).
     elif level==2 :
         word = select_word(level)
         word_display=""
         for letter in word:
             word_display=word_display +"_"
-        print(" ".join(word_display))
+        update_display(word_display)
         tries=10
         char_check=[]
         while tries!=0:
@@ -115,7 +119,7 @@ def GuessGame():
                     print("\nThe word is,", word, "!")
                     print("Well done! :)")
                     break
-            print("\n", " ".join(word_display))
+            update_display(word_display)
     else:
         #Error trapping for when the user does not select any of the available levels.
         print("Ooops! You didn't select any of the available levels!")
