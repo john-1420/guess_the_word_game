@@ -6,17 +6,20 @@
 
 import time
 import random
+import json
+from pathlib import Path
 
 #This function returns a word based on the level the user selected.
 def select_word(level):
-    #Creating two lists with the words for the game.
-    normal_words = ["weak", "head", "burial", "tip", "chorus", "page", "mark", "score"]
-    advanced_words = ["bike", "innovation", "up", "abolish", "iron", "floor", "economist", "stain"]
+    # Load JSON file
+    data_path = Path(__file__).parent.parent / "data" / "words.json"
+    with open(data_path, "r") as f:
+        words = json.load(f)
 
     if level == 1:
-        return random.choice(normal_words)
+        return random.choice(words["normal"])
     elif level == 2:
-        return random.choice(advanced_words)
+        return random.choice(words["advanced"])
     else:
         raise ValueError("Invalid level selected")
 
