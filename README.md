@@ -88,6 +88,19 @@ You will be prompted to:
 
 ---
 
+## 🖼️ Screenshots
+
+### Game Startup
+![Game Startup](images/startup.png)
+
+### Gameplay Example
+![Gameplay Example](images/gameplay.png)
+
+### Win Screen
+![Win Screen](images/win.png)
+
+---
+
 ## 🧪 Running Tests
 
 All tests are located in the `tests/` folder.
