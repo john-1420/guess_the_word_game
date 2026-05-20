@@ -1,0 +1,11 @@
+{
+    "default_difficulty": "normal",
+    "default_category": "animals",
+    "attempts": {
+        "easy": 12,
+        "normal": 10,
+        "hard": 8
+    },
+    "colour_output": true,
+    "logging_level": "INFO"
+}
