@@ -21,6 +21,11 @@ CYAN = Fore.CYAN
 MAGENTA = Fore.MAGENTA
 RESET = Style.RESET_ALL
 
+def apply_color(text, color, config):
+    if config.get("colour_output", True):
+        return f"{color}{text}{RESET}"
+    return text
+
 def load_highscores():
     path = Path(__file__).parent.parent / "data" / "highscores.json"
 
@@ -92,21 +97,9 @@ def validate_guess(guess, char_check):
     return True, guess
 
 #This function handles the error trapping part, for when the user: presses enter, types two or more letters, types a number or types a character that has already been evaluated.
-def get_user_input(char_check):
+def get_user_input(char_check, config):
     """
     Prompt the user for a single valid letter guess.
-
-    Ensures the input is:
-    - non-empty
-    - a single character
-    - alphabetic
-    - not previously guessed
-
-    Args:
-        char_check (list[str]): List of letters already guessed.
-
-    Returns:
-        str: A validated lowercase letter.
     """
 
     while True:
@@ -119,13 +112,13 @@ def get_user_input(char_check):
 
         if not valid:
             if result == "empty":
-                print(f"{YELLOW}Did you forget something? :o\n{RESET}")
+                print(apply_color("Did you forget something? :o", YELLOW, config))
             elif result == "multiple":
-                print(f"{YELLOW}Type ONE letter please.\n{RESET}")
+                print(apply_color("Type ONE letter please.", YELLOW, config))
             elif result == "nonalpha":
-                print(f"{YELLOW}Only letters are allowed!\n{RESET}")
+                print(apply_color("Only letters are allowed!", YELLOW, config))
             elif result == "repeat":
-                print(f"{YELLOW}That letter has been used already!\n{RESET}")
+                print(apply_color("That letter has been used already!", YELLOW, config))
             continue
 
         # valid guess
@@ -168,15 +161,12 @@ def check_guess(guess, word, word_display, tries):
     return updated_display, tries, correct
 
 #This function prints the updated word after the guess has been made
-def update_display(word_display):
+def update_display(word_display, config):
     """
     Display the current state of the word to the user.
-
-    Args:
-        word_display (str): The string showing revealed and hidden letters.
     """
-
-    print(f"{CYAN}\n{' '.join(word_display)}{RESET}")
+    text = " ".join(word_display)
+    print(apply_color("\n" + text, CYAN, config))
 
 def reveal_random_letter(word, word_display):
     """
@@ -207,17 +197,17 @@ def calculate_score(attempts_left, difficulty, hints_used, config):
 
 #This function operates the main part of the game. Based on the difficulty and category choosed by the user, it will fetch a word from one of the two lists and prompt the user to guess each letter until the word is completed or there are no tries left.
 def GuessGame(config, category, difficulty):
-    word = select_word(category, difficulty) # updated selector
+    word = select_word(category, difficulty)
     attempts = config["attempts"][difficulty]
     hints_used = 0
 
     word_display = "_" * len(word)
-    update_display(word_display)
+    update_display(word_display, config)
 
     guessed = []
 
     while attempts > 0:
-        guess = get_user_input(guessed)
+        guess = get_user_input(guessed, config)
 
         # HINT HANDLING
         if guess == "hint":
@@ -225,51 +215,53 @@ def GuessGame(config, category, difficulty):
             penalty = config["hint_penalty"][difficulty]
             attempts -= penalty
 
-            print(f"\n{YELLOW}Hint used! Revealing a letter... (-{penalty} attempts){RESET}")
-            word_display = reveal_random_letter(word, word_display)
-            update_display(word_display)
+            print(apply_color(
+                f"\nHint used! Revealing a letter... (-{penalty} attempts)",
+                YELLOW, config
+            ))
 
-            # ⭐ NEW: Check if the word is now complete
+            word_display = reveal_random_letter(word, word_display)
+            update_display(word_display, config)
+
             if word_display == word:
                 time.sleep(2)
-                print(f"{GREEN}\nThe word is {word}!{RESET}")
-                print(f"{GREEN}Well done!{RESET}")
+                print(apply_color(f"\nThe word is {word}!", GREEN, config))
+                print(apply_color("Well done!", GREEN, config))
                 round_score = calculate_score(attempts, difficulty, hints_used, config)
                 print(f"Score for this round: {round_score}")
                 return round_score
 
             if attempts <= 0:
                 time.sleep(2)
-                print(f"\n{RED}No attempts left! The word was {word}{RESET}")
+                print(apply_color(f"\nNo attempts left! The word was {word}", RED, config))
                 round_score = calculate_score(attempts, difficulty, hints_used, config)
                 print(f"Score for this round: {round_score}")
                 return round_score
 
             continue
-        
+
         # NORMAL GUESS HANDLING
         word_display, attempts, correct = check_guess(guess, word, word_display, attempts)
 
         if not correct:
             if attempts > 0:
-                print(f"{RED}Try again. Attempts left: {attempts}{RESET}")
+                print(apply_color(f"Try again. Attempts left: {attempts}", RED, config))
             else:
                 time.sleep(2)
-                print(f"\n{RED}No attempts left! The word was {word}{RESET}")
+                print(apply_color(f"\nNo attempts left! The word was {word}", RED, config))
                 round_score = calculate_score(attempts, difficulty, hints_used, config)
                 print(f"Score for this round: {round_score}")
                 return round_score
         else:
-            # After revealing a letter
             if word_display == word:
                 time.sleep(2)
-                print(f"{GREEN}\nThe word is {word}!{RESET}")
-                print(f"{GREEN}Well done!{RESET}")
+                print(apply_color(f"\nThe word is {word}!", GREEN, config))
+                print(apply_color("Well done!", GREEN, config))
                 round_score = calculate_score(attempts, difficulty, hints_used, config)
                 print(f"Score for this round: {round_score}")
                 return round_score
 
-        update_display(word_display)
+        update_display(word_display, config)
 
 #Prints the rules of the game.
 def choose_difficulty(config):
@@ -278,9 +270,9 @@ def choose_difficulty(config):
         difficulty = input("Choose difficulty (easy, normal, hard): ").lower().strip()
         if difficulty in valid:
             return difficulty
-        print("Invalid choice. Please choose easy, normal, or hard.")
+        print(apply_color("Invalid choice. Please choose easy, normal, or hard.", YELLOW, config))
 
-def select_category(words_data):
+def select_category(words_data, config):
     categories = list(words_data.keys())
 
     print("\nAvailable categories:")
@@ -295,57 +287,91 @@ def select_category(words_data):
             if 0 <= index < len(categories):
                 return categories[index]
 
-        print("Invalid choice. Please select a valid category number.")
+        print(apply_color("Invalid choice. Please select a valid category number.", YELLOW, config))
 
-def main_menu():
-    print(f"{CYAN}\nMAIN MENU{RESET}")
-    print(f"{MAGENTA}[1]{RESET} {GREEN}Play Game{RESET}")
-    print(f"{MAGENTA}[2]{RESET} View High Scores")
-    print(f"{MAGENTA}[3]{RESET} Exit")
+def main_menu(config):
+    print(apply_color("\nMAIN MENU", CYAN, config))
+    print(apply_color("[1] Play Game", MAGENTA, config))
+    print(apply_color("[2] View High Scores", MAGENTA, config))
+    print(apply_color("[3] Settings", MAGENTA, config))
+    print(apply_color("[4] Exit", MAGENTA, config))
 
     while True:
         choice = input("Choose an option: ").strip()
-        if choice in ["1", "2", "3"]:
+        if choice in ["1", "2", "3", "4"]:
             return choice
-        print("Invalid choice.")
+        print(apply_color("Invalid choice.", YELLOW, config))
 
-def display_highscores():
+def display_highscores(config):
     data = load_highscores()
 
-    print(f"{CYAN}\n=== HIGH SCORES ==={RESET}")
+    print(apply_color("\n=== HIGH SCORES ===", CYAN, config))
     if not data["scores"]:
-        print(f"{YELLOW}No high scores yet.{RESET}")
+        print(apply_color("No high scores yet.", YELLOW, config))
         return
 
     for i, entry in enumerate(data["scores"], start=1):
-        print(f"{MAGENTA}{i}. {entry['name']} - {entry['score']} pts ({entry['date']}){RESET}")
+        print(apply_color(
+            f"{i}. {entry['name']} - {entry['score']} pts ({entry['date']})",
+            MAGENTA, config
+        ))
+
+def settings_menu(config):
+    while True:
+        print(apply_color("\n=== SETTINGS ===", CYAN, config))
+        print(f"{MAGENTA}[1]{RESET} Toggle Colour Mode (currently: {config['colour_output']})")
+        print(f"{MAGENTA}[2]{RESET} Toggle Logging Level (currently: {config['logging_level']})")
+        print(f"{MAGENTA}[3]{RESET} Save & Return")
+        print(f"{MAGENTA}[4]{RESET} Cancel")
+
+        choice = input("Choose an option: ").strip()
+
+        if choice == "1":
+            config["colour_output"] = not config["colour_output"]
+            print(apply_color(f"Colour mode set to {config['colour_output']}", GREEN, config))
+
+        elif choice == "2":
+            config["logging_level"] = "DEBUG" if config["logging_level"] == "INFO" else "INFO"
+            print(apply_color(f"Logging level set to {config['logging_level']}", GREEN, config))
+
+        elif choice == "3":
+            save_config(config)
+            print(apply_color("Settings saved!", GREEN, config))
+            return
+
+        elif choice == "4":
+            print(apply_color("Changes discarded.", YELLOW, config))
+            return
+
+        else:
+            print(apply_color("Invalid choice.", YELLOW, config))
 
 def main():
-    print(f"{CYAN}Welcome to GUESS THE WORD game! Hope you enjoy it! ;)\n{RESET}")
+    config = load_config()
+
+    print(apply_color("Welcome to GUESS THE WORD game! Hope you enjoy it! ;)\n", CYAN, config))
     time.sleep(2)
 
     print("Now... Let's get to know you better, shall we?\n")
     name = input("How shall I call you? ")
     time.sleep(2)
 
-    print(f"{GREEN}Nice to meet you, {name}!\n{RESET}")
+    print(apply_color(f"Nice to meet you, {name}!\n", GREEN, config))
     time.sleep(2)
 
     total_score = 0
 
     while True:
-        choice = main_menu()   # ⭐ NEW MENU
+        choice = main_menu(config)
 
         if choice == "1":
-            # Play game
             config = load_config()
 
-            # Load words.json
             data_path = Path(__file__).parent.parent / "data" / "words.json"
             with open(data_path, "r") as f:
                 words_data = json.load(f)
 
-            category = select_category(words_data)
+            category = select_category(words_data, config)
             difficulty = choose_difficulty(config)
 
             round_score = GuessGame(config, category, difficulty)
@@ -355,12 +381,15 @@ def main():
             time.sleep(2)
 
         elif choice == "2":
-            # View high scores
-            display_highscores()
+            display_highscores(config)
             time.sleep(2)
 
         elif choice == "3":
-            # Exit and save high score
+            config = load_config()
+            settings_menu(config)
+            time.sleep(1)
+
+        elif choice == "4":
             print(f"\nYour final total score is: {total_score}")
 
             if total_score > 0:
