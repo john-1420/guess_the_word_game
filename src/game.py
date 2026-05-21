@@ -68,7 +68,10 @@ def get_user_input(char_check):
     """
 
     while True:
-        guess = input("Please type in a letter: ").strip().lower()
+        guess = input("Please type in a letter (or type 'hint' for help): ").strip().lower()
+
+        if guess == "hint":
+            return "hint"
 
         valid, result = validate_guess(guess, char_check)
 
@@ -133,6 +136,24 @@ def update_display(word_display):
 
     print("\n", " ".join(word_display))
 
+def reveal_random_letter(word, word_display):
+    """
+    Reveal one random hidden letter in the word.
+    """
+    hidden_indices = [i for i, ch in enumerate(word_display) if ch == "_"]
+
+    if not hidden_indices:
+        return word_display  # nothing to reveal
+
+    index = random.choice(hidden_indices)
+    letter = word[index]
+
+    # rebuild the display string with the revealed letter
+    new_display = list(word_display)
+    new_display[index] = letter
+
+    return "".join(new_display)
+
 #This function operates the main part of the game. Based on the level choosed by the user, it will fetch a word from one of the two lists and prompt the user to guess each letter until the word is completed or there are no tries left.
 def GuessGame(config, difficulty):
     word = select_word(difficulty)   # updated selector
@@ -145,6 +166,23 @@ def GuessGame(config, difficulty):
 
     while attempts > 0:
         guess = get_user_input(guessed)
+
+        # HINT HANDLING
+        if guess == "hint":
+            penalty = config["hint_penalty"][difficulty]
+            attempts -= penalty
+
+            print(f"\nHint used! Revealing a letter... (-{penalty} attempts)")
+            word_display = reveal_random_letter(word, word_display)
+            update_display(word_display)
+
+            if attempts <= 0:
+                print(f"\nNo attempts left! The word was {word}")
+                break
+
+            continue
+        
+        # NORMAL GUESS HANDLING
         word_display, attempts, correct = check_guess(guess, word, word_display, attempts)
 
         if not correct:

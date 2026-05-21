@@ -10,7 +10,7 @@ venv/
 ENV/
 
 # IDE settings
-.vscode/
+# .vscode/
 .idea/
 
 # Logs

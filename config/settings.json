@@ -7,9 +7,14 @@
         "hard": 8
     },
     "word_length": {
-    "easy": [3, 5],
-    "normal": [5, 7],
-    "hard": [7, 10]
+        "easy": [3, 5],
+        "normal": [5, 7],
+        "hard": [7, 10]
+    },
+    "hint_penalty": {
+        "easy": 1,
+        "normal": 2,
+        "hard": 3
     },
     "colour_output": true,
     "logging_level": "INFO"
