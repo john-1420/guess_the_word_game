@@ -155,10 +155,20 @@ def reveal_random_letter(word, word_display):
 
     return "".join(new_display)
 
+def calculate_score(attempts_left, difficulty, hints_used, config):
+    multiplier = config["scoring"]["difficulty_multiplier"][difficulty]
+    base_score = attempts_left * multiplier
+
+    penalty = hints_used * config["hint_penalty"][difficulty]
+
+    final_score = base_score - penalty
+    return max(final_score, 0)
+
 #This function operates the main part of the game. Based on the difficulty and category choosed by the user, it will fetch a word from one of the two lists and prompt the user to guess each letter until the word is completed or there are no tries left.
 def GuessGame(config, category, difficulty):
     word = select_word(category, difficulty) # updated selector
     attempts = config["attempts"][difficulty]
+    hints_used = 0
 
     word_display = "_" * len(word)
     update_display(word_display)
@@ -170,6 +180,7 @@ def GuessGame(config, category, difficulty):
 
         # HINT HANDLING
         if guess == "hint":
+            hints_used += 1
             penalty = config["hint_penalty"][difficulty]
             attempts -= penalty
 
@@ -179,13 +190,19 @@ def GuessGame(config, category, difficulty):
 
             # ⭐ NEW: Check if the word is now complete
             if word_display == word:
+                time.sleep(2)
                 print(f"\nThe word is {word}!")
                 print("Well done!")
-                break
+                round_score = calculate_score(attempts, difficulty, hints_used, config)
+                print(f"Score for this round: {round_score}")
+                return round_score
 
             if attempts <= 0:
+                time.sleep(2)
                 print(f"\nNo attempts left! The word was {word}")
-                break
+                round_score = calculate_score(attempts, difficulty, hints_used, config)
+                print(f"Score for this round: {round_score}")
+                return round_score
 
             continue
         
@@ -196,14 +213,20 @@ def GuessGame(config, category, difficulty):
             if attempts > 0:
                 print(f"Try again. You have {attempts} attempts left.")
             else:
+                time.sleep(2)
                 print(f"\nSorry, no attempts left. The word was {word}")
-                break
+                round_score = calculate_score(attempts, difficulty, hints_used, config)
+                print(f"Score for this round: {round_score}")
+                return round_score
         else:
             # After revealing a letter
             if word_display == word:
+                time.sleep(2)
                 print(f"\nThe word is {word}!")
                 print("Well done!")
-                break
+                round_score = calculate_score(attempts, difficulty, hints_used, config)
+                print(f"Score for this round: {round_score}")
+                return round_score
 
         update_display(word_display)
 
@@ -252,6 +275,7 @@ def main():
 
     #Setting a loop to enable the user to play multiple times.
     play_again="y"
+    total_score = 0
     while play_again=="y":
 
         config = load_config()
@@ -264,14 +288,16 @@ def main():
         category = select_category(words_data)
         difficulty = choose_difficulty(config)
 
-        GuessGame(config, category, difficulty)
-
+        round_score = GuessGame(config, category, difficulty)
+        total_score += round_score
+        print(f"Total score so far: {total_score}")
         time.sleep(3)
 
         #Prompts the user to choose wether to continue playing or to exit.
         play_again=input("\nDo you want to continue? (Y or any key to exit):\n")
         play_again=play_again.lower()
 
+    print(f"\nYour final total score for this session is: {total_score}")
     print("Thanks for playing! :)")
 
 if __name__ == "__main__":
