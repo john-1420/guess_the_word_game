@@ -12,31 +12,12 @@ import json
 from pathlib import Path
 
 #This function returns a word based on the level the user selected.
-def select_word(level):
-    """
-    Select a random word based on the chosen difficulty level.
-
-    Args:
-        level (int): Difficulty level selected by the user (1 = normal, 2 = advanced).
-
-    Returns:
-        str: A randomly selected word from the appropriate word list.
-
-    Raises:
-        ValueError: If an invalid level is provided.
-    """
-
-    # Load JSON file
+def select_word(difficulty):
     data_path = Path(__file__).parent.parent / "data" / "words.json"
     with open(data_path, "r") as f:
         words = json.load(f)
 
-    if level == 1:
-        return random.choice(words["normal"])
-    elif level == 2:
-        return random.choice(words["advanced"])
-    else:
-        raise ValueError("Invalid level selected")
+    return random.choice(words[difficulty])
 
 def validate_guess(guess, char_check):
     """
@@ -153,74 +134,41 @@ def update_display(word_display):
     print("\n", " ".join(word_display))
 
 #This function operates the main part of the game. Based on the level choosed by the user, it will fetch a word from one of the two lists and prompt the user to guess each letter until the word is completed or there are no tries left.
-def GuessGame(level):
-    """
-    Run a full round of the Guess The Word game.
+def GuessGame(config, difficulty):
+    word = select_word(difficulty)   # updated selector
+    attempts = config["attempts"][difficulty]
 
-    Handles:
-    - word selection
-    - user input loop
-    - guess checking
-    - display updates
-    - win/lose conditions
+    word_display = "_" * len(word)
+    update_display(word_display)
 
-    Args:
-        level (int): Difficulty level selected by the user.
-    """
+    guessed = []
 
-    #It runs when level==1. Essentially it chooses a random word from a list (normalGame) and display it for the user two see how many charecters there are, and set the tries to 10.
-    if level==1 :
-        word = select_word(level)
-        word_display=""
-        for letter in word:
-            word_display=word_display +"_"
-        update_display(word_display)
-        tries=10
-        char_check=[]
-        while tries!=0:
-            guess = get_user_input(char_check)
-            #In this part the user's letter is being compared to each letter of the word and if there is a correspondence the letter is unveiled, else a message is being displayed and the number of tries reduces by one. This goes on until the word is guessed or the are no tries left.
-            word_display, tries, correct = check_guess(guess, word, word_display, tries)
-            if not correct:
-                if tries > 0:
-                    print("Try again. You have,", tries, "tries left")
-                else:
-                    print("\nSorry, no lives left. The word was,", word)
-                    break
+    while attempts > 0:
+        guess = get_user_input(guessed)
+        word_display, attempts, correct = check_guess(guess, word, word_display, attempts)
+
+        if not correct:
+            if attempts > 0:
+                print(f"Try again. You have {attempts} attempts left.")
             else:
-                if word_display == word:
-                    print("\nThe word is,", word, "!")
-                    print("Well done! :)")
-                    break
-            update_display(word_display)
-    #It runs when level==2. It works just like when level==1, only difference being the word is being fetched from a different list (advanceGame).
-    elif level==2 :
-        word = select_word(level)
-        word_display=""
-        for letter in word:
-            word_display=word_display +"_"
+                print(f"\nSorry, no attempts left. The word was {word}")
+                break
+        else:
+            if word_display == word:
+                print(f"\nThe word is {word}!")
+                print("Well done!")
+                break
+
         update_display(word_display)
-        tries=10
-        char_check=[]
-        while tries!=0:
-            guess = get_user_input(char_check)
-            #In this part the user's letter is being compared to each letter of the word and if there is a correspondence the letter is unveiled, else a message is being displayed and the number of tries reduces by one. This goes on until the word is guessed or the are no tries left.
-            word_display, tries, correct = check_guess(guess, word, word_display, tries)
-            if not correct:
-                if tries > 0:
-                    print("Try again. You have,", tries, "tries left")
-                else:
-                    print("\nSorry, no lives left. The word was,", word)
-                    break
-            else:
-                if word_display == word:
-                    print("\nThe word is,", word, "!")
-                    print("Well done! :)")
-                    break
-            update_display(word_display)
-    else:
-        #Error trapping for when the user does not select any of the available levels.
-        print("Ooops! You didn't select any of the available levels!")
+
+#Prints the rules of the game.
+def choose_difficulty(config):
+    valid = ["easy", "normal", "hard"]
+    while True:
+        difficulty = input("Choose difficulty (easy, normal, hard): ").lower().strip()
+        if difficulty in valid:
+            return difficulty
+        print("Invalid choice. Please choose easy, normal, or hard.")
 
 def main():
     #Prints a welcome message.
@@ -239,44 +187,15 @@ def main():
 
     time.sleep(2)
 
-    #Prints the rules of the game.
-    print(
-    """
-
-            Available levels for you to play:
-
-            PRESS 1 OR 2 ON THE KEYBOARD
-
-        [1]=NORMAL: You will have to guess a word that can
-                have up to 8 characters.
-
-        [2]=ADVANCE: You will have to guess a word that can
-                have up to 10 characters.
-
-        ##ATTENTION! You will have only 10 attempts
-                to guess each letter of the word.##
-
-
-                                            """)
-
-    time.sleep(3)
     #Setting a loop to enable the user to play multiple times.
     play_again="y"
     while play_again=="y":
 
-        #Error trapping for when the user does not type a digit.
-        while True:
-            try:
-                level=int(input("Which level do you want to play? [1] or [2]"))
-                break
-            except ValueError:
-                print("Please type either 1 or 2.\n")
+        config = load_config()
 
-        #Prints a message to the screen when the condition is met and makes a function call, starting the game.
-        if level==1 or level==2 :
-            print("\nAlright! Let's start!")
+        difficulty = choose_difficulty(config)
 
-        GuessGame(level)
+        GuessGame(config, difficulty)
 
         time.sleep(3)
 

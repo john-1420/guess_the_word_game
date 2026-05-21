@@ -6,6 +6,11 @@
         "normal": 10,
         "hard": 8
     },
+    "word_length": {
+    "easy": [3, 5],
+    "normal": [5, 7],
+    "hard": [7, 10]
+    },
     "colour_output": true,
     "logging_level": "INFO"
 }
