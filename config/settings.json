@@ -12,8 +12,8 @@
         "hard": [7, 10]
     },
     "hint_penalty": {
-        "easy": 1,
-        "normal": 2,
+        "easy": 5,
+        "normal": 3,
         "hard": 3
     },
     "colour_output": true,

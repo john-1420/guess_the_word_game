@@ -1,20 +1,17 @@
 {
-    "easy": [
-        "weak",
-        "head",
-        "tip",
-        "page"
-    ],
-    "normal": [
-        "burial",
-        "chorus",
-        "score",
-        "mark"
-    ],
-    "hard": [
-        "innovation",
-        "economist",
-        "abolish",
-        "stain"
-    ]
+    "animals": {
+        "easy": ["cat", "dog", "cow"],
+        "normal": ["rabbit", "tiger", "zebra"],
+        "hard": ["elephant", "kangaroo", "chimpanzee"]
+    },
+    "food": {
+        "easy": ["egg", "pie", "ham"],
+        "normal": ["pasta", "salmon", "cheese"],
+        "hard": ["lasagna", "croissant", "cappuccino"]
+    },
+    "countries": {
+        "easy": ["uk", "usa", "spain"],
+        "normal": ["france", "germany", "sweden"],
+        "hard": ["australia", "argentina", "kazakhstan"]
+    }
 }

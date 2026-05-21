@@ -11,13 +11,14 @@ import random
 import json
 from pathlib import Path
 
-#This function returns a word based on the level the user selected.
-def select_word(difficulty):
+#This function returns a word based on the category and difficulty the user selected.
+def select_word(category, difficulty):
     data_path = Path(__file__).parent.parent / "data" / "words.json"
     with open(data_path, "r") as f:
         words = json.load(f)
 
-    return random.choice(words[difficulty])
+    word_list = words[category][difficulty]
+    return random.choice(word_list)
 
 def validate_guess(guess, char_check):
     """
@@ -154,9 +155,9 @@ def reveal_random_letter(word, word_display):
 
     return "".join(new_display)
 
-#This function operates the main part of the game. Based on the level choosed by the user, it will fetch a word from one of the two lists and prompt the user to guess each letter until the word is completed or there are no tries left.
-def GuessGame(config, difficulty):
-    word = select_word(difficulty)   # updated selector
+#This function operates the main part of the game. Based on the difficulty and category choosed by the user, it will fetch a word from one of the two lists and prompt the user to guess each letter until the word is completed or there are no tries left.
+def GuessGame(config, category, difficulty):
+    word = select_word(category, difficulty) # updated selector
     attempts = config["attempts"][difficulty]
 
     word_display = "_" * len(word)
@@ -176,6 +177,12 @@ def GuessGame(config, difficulty):
             word_display = reveal_random_letter(word, word_display)
             update_display(word_display)
 
+            # ⭐ NEW: Check if the word is now complete
+            if word_display == word:
+                print(f"\nThe word is {word}!")
+                print("Well done!")
+                break
+
             if attempts <= 0:
                 print(f"\nNo attempts left! The word was {word}")
                 break
@@ -192,6 +199,7 @@ def GuessGame(config, difficulty):
                 print(f"\nSorry, no attempts left. The word was {word}")
                 break
         else:
+            # After revealing a letter
             if word_display == word:
                 print(f"\nThe word is {word}!")
                 print("Well done!")
@@ -207,6 +215,23 @@ def choose_difficulty(config):
         if difficulty in valid:
             return difficulty
         print("Invalid choice. Please choose easy, normal, or hard.")
+
+def select_category(words_data):
+    categories = list(words_data.keys())
+
+    print("\nAvailable categories:")
+    for i, cat in enumerate(categories, start=1):
+        print(f"[{i}] {cat.capitalize()}")
+
+    while True:
+        choice = input("Choose a category by number: ").strip()
+
+        if choice.isdigit():
+            index = int(choice) - 1
+            if 0 <= index < len(categories):
+                return categories[index]
+
+        print("Invalid choice. Please select a valid category number.")
 
 def main():
     #Prints a welcome message.
@@ -231,9 +256,15 @@ def main():
 
         config = load_config()
 
+        # Load words.json once
+        data_path = Path(__file__).parent.parent / "data" / "words.json"
+        with open(data_path, "r") as f:
+            words_data = json.load(f)
+
+        category = select_category(words_data)
         difficulty = choose_difficulty(config)
 
-        GuessGame(config, difficulty)
+        GuessGame(config, category, difficulty)
 
         time.sleep(3)
 
