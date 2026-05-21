@@ -5,11 +5,43 @@
 #=============================================
 
 from src.config_manager import load_config, save_config
+from datetime import datetime
 
 import time
 import random
 import json
 from pathlib import Path
+
+def load_highscores():
+    path = Path(__file__).parent.parent / "data" / "highscores.json"
+
+    if not path.exists():
+        return {"scores": []}
+
+    with open(path, "r") as f:
+        return json.load(f)
+
+def save_highscore(name, score):
+    path = Path(__file__).parent.parent / "data" / "highscores.json"
+
+    data = load_highscores()
+
+    entry = {
+        "name": name,
+        "score": score,
+        "date": datetime.now().strftime("%Y-%m-%d")
+    }
+
+    data["scores"].append(entry)
+
+    # Sort by score descending
+    data["scores"] = sorted(data["scores"], key=lambda x: x["score"], reverse=True)
+
+    # Keep only top 10
+    data["scores"] = data["scores"][:10]
+
+    with open(path, "w") as f:
+        json.dump(data, f, indent=4)
 
 #This function returns a word based on the category and difficulty the user selected.
 def select_word(category, difficulty):
@@ -256,49 +288,80 @@ def select_category(words_data):
 
         print("Invalid choice. Please select a valid category number.")
 
+def main_menu():
+    print("\nMAIN MENU")
+    print("[1] Play Game")
+    print("[2] View High Scores")
+    print("[3] Exit")
+
+    while True:
+        choice = input("Choose an option: ").strip()
+        if choice in ["1", "2", "3"]:
+            return choice
+        print("Invalid choice.")
+
+def display_highscores():
+    data = load_highscores()
+
+    print("\n=== HIGH SCORES ===")
+    if not data["scores"]:
+        print("No high scores yet.")
+        return
+
+    for i, entry in enumerate(data["scores"], start=1):
+        print(f"{i}. {entry['name']} - {entry['score']} pts ({entry['date']})")
+
 def main():
-    #Prints a welcome message.
-    print("Hello there! This is the ##GUESS THE WORD## game! Hope you enjoy it! ;)\n")
-
+    print("Welcome to GUESS THE WORD game! Hope you enjoy it! ;)\n")
     time.sleep(2)
 
-    print("Now..Let's get to know you better, shall we?\n")
-
-    #Accepts a name from the user.
-    name=input("How shall I call you?")
-
+    print("Now... Let's get to know you better, shall we?\n")
+    name = input("How shall I call you? ")
     time.sleep(2)
 
-    print("\nNice to meet you", name, "!\n")
-
+    print(f"\nNice to meet you, {name}!\n")
     time.sleep(2)
 
-    #Setting a loop to enable the user to play multiple times.
-    play_again="y"
     total_score = 0
-    while play_again=="y":
 
-        config = load_config()
+    while True:
+        choice = main_menu()   # ⭐ NEW MENU
 
-        # Load words.json once
-        data_path = Path(__file__).parent.parent / "data" / "words.json"
-        with open(data_path, "r") as f:
-            words_data = json.load(f)
+        if choice == "1":
+            # Play game
+            config = load_config()
 
-        category = select_category(words_data)
-        difficulty = choose_difficulty(config)
+            # Load words.json
+            data_path = Path(__file__).parent.parent / "data" / "words.json"
+            with open(data_path, "r") as f:
+                words_data = json.load(f)
 
-        round_score = GuessGame(config, category, difficulty)
-        total_score += round_score
-        print(f"Total score so far: {total_score}")
-        time.sleep(3)
+            category = select_category(words_data)
+            difficulty = choose_difficulty(config)
 
-        #Prompts the user to choose wether to continue playing or to exit.
-        play_again=input("\nDo you want to continue? (Y or any key to exit):\n")
-        play_again=play_again.lower()
+            round_score = GuessGame(config, category, difficulty)
+            total_score += round_score
 
-    print(f"\nYour final total score for this session is: {total_score}")
-    print("Thanks for playing! :)")
+            print(f"Total score so far: {total_score}")
+            time.sleep(2)
+
+        elif choice == "2":
+            # View high scores
+            display_highscores()
+            time.sleep(2)
+
+        elif choice == "3":
+            # Exit and save high score
+            print(f"\nYour final total score is: {total_score}")
+
+            if total_score > 0:
+                save_highscore(name, total_score)
+                print("Your score has been saved to the high scores!")
+            else:
+                print("No score to save.")
+
+            print("Thanks for playing! :)")
+            break
 
 if __name__ == "__main__":
     main()
