@@ -4,6 +4,7 @@
 #Updated: 21/05/2026
 #=============================================
 
+from pathlib import Path
 from src.config_manager import load_config, save_config
 from datetime import datetime
 from colorama import Fore, Style, init
@@ -12,7 +13,7 @@ init(autoreset=True)
 import time
 import random
 import json
-from pathlib import Path
+import logging
 
 GREEN = Fore.GREEN
 RED = Fore.RED
@@ -25,6 +26,19 @@ def apply_color(text, color, config):
     if config.get("colour_output", True):
         return f"{color}{text}{RESET}"
     return text
+
+# Create logs directory if missing
+log_dir = Path(__file__).parent.parent / "logs"
+log_dir.mkdir(exist_ok=True)
+
+log_file = log_dir / "game.log"
+
+logging.basicConfig(
+    filename=log_file,
+    level=logging.INFO,  # default, will be overridden by config
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    filemode="a"
+)
 
 def load_highscores():
     path = Path(__file__).parent.parent / "data" / "highscores.json"
@@ -198,6 +212,7 @@ def calculate_score(attempts_left, difficulty, hints_used, config):
 #This function operates the main part of the game. Based on the difficulty and category choosed by the user, it will fetch a word from one of the two lists and prompt the user to guess each letter until the word is completed or there are no tries left.
 def GuessGame(config, category, difficulty):
     word = select_word(category, difficulty)
+    logging.debug(f"Chosen word: {word}")
     attempts = config["attempts"][difficulty]
     hints_used = 0
 
@@ -208,6 +223,7 @@ def GuessGame(config, category, difficulty):
 
     while attempts > 0:
         guess = get_user_input(guessed, config)
+        logging.info(f"User guessed: {guess}")
 
         # HINT HANDLING
         if guess == "hint":
@@ -349,6 +365,10 @@ def settings_menu(config):
 def main():
     config = load_config()
 
+    # Apply logging level
+    level = logging.DEBUG if config["logging_level"] == "DEBUG" else logging.INFO
+    logging.getLogger().setLevel(level)
+
     print(apply_color("Welcome to GUESS THE WORD game! Hope you enjoy it! ;)\n", CYAN, config))
     time.sleep(2)
 
@@ -372,10 +392,16 @@ def main():
                 words_data = json.load(f)
 
             category = select_category(words_data, config)
+            logging.info(f"Selected category: {category}")
             difficulty = choose_difficulty(config)
+            logging.info(f"Selected difficulty: {difficulty}")
 
+            logging.info("Game started")
             round_score = GuessGame(config, category, difficulty)
+            logging.info("Game ended")
             total_score += round_score
+            logging.info(f"Round score: {round_score}")
+            logging.info(f"Total score: {total_score}")
 
             print(f"Total score so far: {total_score}")
             time.sleep(2)
@@ -402,4 +428,8 @@ def main():
             break
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        logging.exception("Unhandled exception occurred")
+        raise
