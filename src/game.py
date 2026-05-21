@@ -1,16 +1,25 @@
 #In this program the user is required to guess every letter of a given unknown word.
 #Date: 23/03/2023
 #Written by: John Razak
-#Updated: 19/05/2026
+#Updated: 21/05/2026
 #=============================================
 
 from src.config_manager import load_config, save_config
 from datetime import datetime
+from colorama import Fore, Style, init
+init(autoreset=True)
 
 import time
 import random
 import json
 from pathlib import Path
+
+GREEN = Fore.GREEN
+RED = Fore.RED
+YELLOW = Fore.YELLOW
+CYAN = Fore.CYAN
+MAGENTA = Fore.MAGENTA
+RESET = Style.RESET_ALL
 
 def load_highscores():
     path = Path(__file__).parent.parent / "data" / "highscores.json"
@@ -110,13 +119,13 @@ def get_user_input(char_check):
 
         if not valid:
             if result == "empty":
-                print("Did you forget something? :o\n")
+                print(f"{YELLOW}Did you forget something? :o\n{RESET}")
             elif result == "multiple":
-                print("Type ONE letter please.\n")
+                print(f"{YELLOW}Type ONE letter please.\n{RESET}")
             elif result == "nonalpha":
-                print("Only letters are allowed!\n")
+                print(f"{YELLOW}Only letters are allowed!\n{RESET}")
             elif result == "repeat":
-                print("That letter has been used already!\n")
+                print(f"{YELLOW}That letter has been used already!\n{RESET}")
             continue
 
         # valid guess
@@ -167,7 +176,7 @@ def update_display(word_display):
         word_display (str): The string showing revealed and hidden letters.
     """
 
-    print("\n", " ".join(word_display))
+    print(f"{CYAN}\n{' '.join(word_display)}{RESET}")
 
 def reveal_random_letter(word, word_display):
     """
@@ -216,22 +225,22 @@ def GuessGame(config, category, difficulty):
             penalty = config["hint_penalty"][difficulty]
             attempts -= penalty
 
-            print(f"\nHint used! Revealing a letter... (-{penalty} attempts)")
+            print(f"\n{YELLOW}Hint used! Revealing a letter... (-{penalty} attempts){RESET}")
             word_display = reveal_random_letter(word, word_display)
             update_display(word_display)
 
             # ⭐ NEW: Check if the word is now complete
             if word_display == word:
                 time.sleep(2)
-                print(f"\nThe word is {word}!")
-                print("Well done!")
+                print(f"{GREEN}\nThe word is {word}!{RESET}")
+                print(f"{GREEN}Well done!{RESET}")
                 round_score = calculate_score(attempts, difficulty, hints_used, config)
                 print(f"Score for this round: {round_score}")
                 return round_score
 
             if attempts <= 0:
                 time.sleep(2)
-                print(f"\nNo attempts left! The word was {word}")
+                print(f"\n{RED}No attempts left! The word was {word}{RESET}")
                 round_score = calculate_score(attempts, difficulty, hints_used, config)
                 print(f"Score for this round: {round_score}")
                 return round_score
@@ -243,10 +252,10 @@ def GuessGame(config, category, difficulty):
 
         if not correct:
             if attempts > 0:
-                print(f"Try again. You have {attempts} attempts left.")
+                print(f"{RED}Try again. Attempts left: {attempts}{RESET}")
             else:
                 time.sleep(2)
-                print(f"\nSorry, no attempts left. The word was {word}")
+                print(f"\n{RED}No attempts left! The word was {word}{RESET}")
                 round_score = calculate_score(attempts, difficulty, hints_used, config)
                 print(f"Score for this round: {round_score}")
                 return round_score
@@ -254,8 +263,8 @@ def GuessGame(config, category, difficulty):
             # After revealing a letter
             if word_display == word:
                 time.sleep(2)
-                print(f"\nThe word is {word}!")
-                print("Well done!")
+                print(f"{GREEN}\nThe word is {word}!{RESET}")
+                print(f"{GREEN}Well done!{RESET}")
                 round_score = calculate_score(attempts, difficulty, hints_used, config)
                 print(f"Score for this round: {round_score}")
                 return round_score
@@ -289,10 +298,10 @@ def select_category(words_data):
         print("Invalid choice. Please select a valid category number.")
 
 def main_menu():
-    print("\nMAIN MENU")
-    print("[1] Play Game")
-    print("[2] View High Scores")
-    print("[3] Exit")
+    print(f"{CYAN}\nMAIN MENU{RESET}")
+    print(f"{MAGENTA}[1]{RESET} {GREEN}Play Game{RESET}")
+    print(f"{MAGENTA}[2]{RESET} View High Scores")
+    print(f"{MAGENTA}[3]{RESET} Exit")
 
     while True:
         choice = input("Choose an option: ").strip()
@@ -303,23 +312,23 @@ def main_menu():
 def display_highscores():
     data = load_highscores()
 
-    print("\n=== HIGH SCORES ===")
+    print(f"{CYAN}\n=== HIGH SCORES ==={RESET}")
     if not data["scores"]:
-        print("No high scores yet.")
+        print(f"{YELLOW}No high scores yet.{RESET}")
         return
 
     for i, entry in enumerate(data["scores"], start=1):
-        print(f"{i}. {entry['name']} - {entry['score']} pts ({entry['date']})")
+        print(f"{MAGENTA}{i}. {entry['name']} - {entry['score']} pts ({entry['date']}){RESET}")
 
 def main():
-    print("Welcome to GUESS THE WORD game! Hope you enjoy it! ;)\n")
+    print(f"{CYAN}Welcome to GUESS THE WORD game! Hope you enjoy it! ;)\n{RESET}")
     time.sleep(2)
 
     print("Now... Let's get to know you better, shall we?\n")
     name = input("How shall I call you? ")
     time.sleep(2)
 
-    print(f"\nNice to meet you, {name}!\n")
+    print(f"{GREEN}Nice to meet you, {name}!\n{RESET}")
     time.sleep(2)
 
     total_score = 0
