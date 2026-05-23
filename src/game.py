@@ -30,6 +30,15 @@ logging.basicConfig(
 
 #Prints the rules of the game.
 def choose_difficulty(config):
+    """
+    Prompt the user to select a difficulty level.
+
+    Parameters:
+        config (dict): The loaded configuration settings, used for colour output.
+
+    Returns:
+        str: The chosen difficulty ("easy", "normal", or "hard").
+    """
     valid = ["easy", "normal", "hard"]
     while True:
         difficulty = input("Choose difficulty (easy, normal, hard): ").lower().strip()
@@ -37,7 +46,18 @@ def choose_difficulty(config):
             return difficulty
         print(apply_color("Invalid choice. Please choose easy, normal, or hard.", YELLOW, config))
 
+
 def select_category(words_data, config):
+    """
+    Display available word categories and prompt the user to select one.
+
+    Parameters:
+        words_data (dict): Dictionary containing categories mapped to word lists.
+        config (dict): Configuration settings for colour output.
+
+    Returns:
+        str: The selected category name.
+    """
     categories = list(words_data.keys())
 
     print("\nAvailable categories:")
@@ -54,7 +74,22 @@ def select_category(words_data, config):
 
         print(apply_color("Invalid choice. Please select a valid category number.", YELLOW, config))
 
+
 def main():
+    """
+    Main entry point for the Guess The Word game.
+
+    Handles:
+        - Loading configuration
+        - Applying logging settings
+        - Greeting the player
+        - Displaying the main menu
+        - Running game rounds
+        - Tracking total score
+        - Saving highscores on exit
+
+    This function orchestrates the entire game flow.
+    """
     config = load_config()
 
     # Apply logging level

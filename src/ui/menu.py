@@ -6,6 +6,15 @@ from src.config_manager import save_config
 
 
 def main_menu(config):
+    """
+    Display the main menu and prompt the user to choose an option.
+
+    Parameters:
+        config (dict): Configuration settings used for colour output.
+
+    Returns:
+        str: The selected menu option ("1", "2", "3", or "4").
+    """
     print(apply_color("\nMAIN MENU", CYAN, config))
     print(apply_color("[1] Play Game", MAGENTA, config))
     print(apply_color("[2] View High Scores", MAGENTA, config))
@@ -20,6 +29,15 @@ def main_menu(config):
 
 
 def display_highscores(config):
+    """
+    Display the list of saved high scores.
+
+    Parameters:
+        config (dict): Configuration settings for colour output.
+
+    Returns:
+        None
+    """
     data = load_highscores()
 
     print(apply_color("\n=== HIGH SCORES ===", CYAN, config))
@@ -33,6 +51,21 @@ def display_highscores(config):
 
 
 def settings_menu(config):
+    """
+    Display and manage the settings menu.
+
+    Allows the user to:
+        - Toggle colour output
+        - Toggle logging level (INFO/DEBUG)
+        - Save changes
+        - Cancel changes
+
+    Parameters:
+        config (dict): The current configuration settings.
+
+    Returns:
+        None
+    """
     while True:
         print(apply_color("\n=== SETTINGS ===", CYAN, config))
         print(apply_color(f"[1] Toggle Colour Mode (currently: {config['colour_output']})", MAGENTA, config))

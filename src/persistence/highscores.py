@@ -6,15 +6,23 @@ from datetime import datetime
 
 HIGHSCORE_PATH = Path(__file__).resolve().parents[2] / "data" / "highscores.json"
 
+
 def load_highscores():
     """
-    Load highscores.json, return structure:
-    {
-        "scores": [
-            {"name": "...", "score": 123, "date": "2025-05-01"},
-            ...
-        ]
-    }
+    Load the high score data from highscores.json.
+
+    Returns:
+        dict: A dictionary with the structure:
+            {
+                "scores": [
+                    {"name": str, "score": int, "date": "YYYY-MM-DD"},
+                    ...
+                ]
+            }
+
+    Notes:
+        - If the file does not exist, an empty structure is returned.
+        - No sorting is applied here; scores are returned as stored.
     """
     if not HIGHSCORE_PATH.exists():
         return {"scores": []}
@@ -25,9 +33,18 @@ def load_highscores():
 
 def save_highscore(name, score):
     """
-    Append a new high score entry and save back to highscores.json.
-    """
+    Save a new high score entry to highscores.json.
 
+    Parameters:
+        name (str): The player's name.
+        score (int): The player's total score for the session.
+
+    Behaviour:
+        - Loads existing high scores.
+        - Appends a new entry with the current date.
+        - Sorts all scores in descending order.
+        - Writes the updated list back to highscores.json.
+    """
     data = load_highscores()
 
     entry = {

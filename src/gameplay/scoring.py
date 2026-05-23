@@ -4,7 +4,26 @@ import logging
 
 def calculate_score(attempts_left, difficulty, hints_used, config):
     """
-    Calculate round score using config-driven multipliers and penalties.
+    Calculate the player's score for a single round.
+
+    Parameters:
+        attempts_left (int): Number of attempts remaining at the end of the round.
+        difficulty (str): Difficulty level ("easy", "normal", "hard").
+        hints_used (int): Total number of hints used during the round.
+        config (dict): Configuration settings containing scoring multipliers
+                       and hint penalties.
+
+    Returns:
+        int: The final score for the round (never negative).
+
+    Scoring Formula:
+        base_score = attempts_left * difficulty_multiplier
+        penalty = hints_used * hint_penalty
+        final_score = max(base_score - penalty, 0)
+
+    Notes:
+        - Difficulty multipliers and hint penalties are defined in settings.json.
+        - All scoring events are logged for debugging and analytics.
     """
 
     multiplier = config["scoring"]["difficulty_multiplier"][difficulty]

@@ -10,7 +10,37 @@ from src.ui.display import apply_color, update_display, GREEN, RED, YELLOW
 
 def GuessGame(config, category, difficulty):
     """
-    Core gameplay loop for a single round.
+    Run a single round of the Guess The Word game.
+
+    Parameters:
+        config (dict): Configuration settings loaded from settings.json.
+                       Includes attempts per difficulty, hint penalties,
+                       colour mode, and logging level.
+        category (str): The selected word category (e.g., "animals", "food").
+        difficulty (str): The chosen difficulty level ("easy", "normal", "hard").
+
+    Returns:
+        int: The player's score for this round, calculated using:
+             - attempts remaining
+             - difficulty multiplier
+             - number of hints used
+
+    Gameplay Flow:
+        - Selects a random word based on category + difficulty.
+        - Initializes attempts and hint counters.
+        - Displays the hidden word as underscores.
+        - Repeatedly prompts the user for input:
+            * Normal letter guesses
+            * "hint" command to reveal a random letter (with penalty)
+        - Updates the displayed word after each guess.
+        - Ends the round when:
+            * The word is fully revealed, or
+            * Attempts reach zero.
+        - Calculates and returns the round score.
+
+    Notes:
+        - All user interactions (guesses, hints, results) are logged.
+        - Hint penalties and attempt scaling are defined in settings.json.
     """
 
     # Select word

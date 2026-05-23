@@ -6,10 +6,24 @@ import logging
 
 def validate_guess(guess, guessed_letters):
     """
-    Validate a single-character guess.
-    Returns (valid: bool, result: str)
-    """
+    Validate a player's guess and classify any invalid input.
 
+    Parameters:
+        guess (str): The raw user input to validate.
+        guessed_letters (list[str]): Letters already guessed in this round.
+
+    Returns:
+        tuple:
+            - bool: True if the guess is valid, False otherwise.
+            - str: Either the cleaned guess (lowercase) or an error code:
+                   "empty", "multiple", "nonalpha", "repeat".
+
+    Behaviour:
+        - Ensures the guess is non-empty.
+        - Ensures only one character is entered.
+        - Ensures the guess is alphabetic.
+        - Ensures the letter has not been guessed before.
+    """
     guess = guess.strip().lower()
 
     if guess == "":
@@ -29,9 +43,22 @@ def validate_guess(guess, guessed_letters):
 
 def get_user_input(guessed_letters, config):
     """
-    Prompt the user for a valid guess or 'hint'.
-    """
+    Prompt the user for a valid letter guess or the 'hint' command.
 
+    Parameters:
+        guessed_letters (list[str]): Letters already guessed in this round.
+        config (dict): Configuration settings for colour output.
+
+    Returns:
+        str: Either a valid single-letter guess or the string "hint".
+
+    Behaviour:
+        - Accepts the special command "hint".
+        - Validates all other input using validate_guess().
+        - Prints colour-coded feedback for invalid input.
+        - Appends valid guesses to guessed_letters.
+        - Logs all user actions.
+    """
     while True:
         guess = input("Please type in a letter (or type 'hint' for help): ").strip().lower()
 

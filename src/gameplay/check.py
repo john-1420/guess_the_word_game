@@ -1,7 +1,22 @@
 def check_guess(guess, word, word_display, attempts):
     """
-    Check if the guessed letter is in the word.
-    Returns updated (word_display, attempts, correct)
+    Evaluate a player's guessed letter and update game state accordingly.
+
+    Parameters:
+        guess (str): The letter guessed by the player.
+        word (str): The target word the player is trying to guess.
+        word_display (str): The current revealed state of the word (e.g., "_p_l_").
+        attempts (int): The number of attempts remaining before the guess.
+
+    Returns:
+        tuple:
+            - str: Updated word display after applying the guess.
+            - int: Updated number of attempts remaining.
+            - bool: True if the guess was correct, False otherwise.
+
+    Behaviour:
+        - If the guess is in the word, all matching positions are revealed.
+        - If incorrect, one attempt is deducted.
     """
 
     correct = guess in word

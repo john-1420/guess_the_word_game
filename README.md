@@ -126,6 +126,16 @@ This project will evolve into:
 
 ---
 
+## 📘 Documentation
+
+Full documentation for each development tier is available in the `docs/` folder:
+ 
+- Tier 2 Documentation → `docs/tier2/`
+
+- Tier 3+ (coming soon)
+
+---
+
 ## 👤 Author
 
 **John Razak**  
