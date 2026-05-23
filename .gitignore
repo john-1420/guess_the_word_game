@@ -10,7 +10,7 @@ venv/
 ENV/
 
 # IDE settings
-.vscode/
+# .vscode/
 .idea/
 
 # Logs
@@ -19,3 +19,6 @@ ENV/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Project files
+data/highscores.json

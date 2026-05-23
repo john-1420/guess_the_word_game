@@ -1,0 +1,1 @@
+# Gameplay package: core game logic, word handling, scoring, input validation
