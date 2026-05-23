@@ -1,4 +1,4 @@
-from src.game import validate_guess
+from src.gameplay.input import validate_guess
 
 def test_empty_input():
     valid, msg = validate_guess("", [])
