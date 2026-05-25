@@ -14,14 +14,46 @@ This project is designed as a learning exercise in:
 
 ---
 
+# ⭐ Current Release — Tier 2 (v2.0.0)
+
+The project has evolved significantly beyond the original Tier 1 version.  
+Tier 2 introduces major improvements to gameplay, architecture, and maintainability.
+
+### ✔ New Tier 2 Features
+- Difficulty‑based scoring system  
+- Category‑based word selection  
+- Configurable settings via `settings.json`  
+- High‑score saving and loading  
+- Logging system (`logs/game.log`)  
+- Fully modular architecture (`ui/`, `gameplay/`, `persistence/`)  
+- Expanded test suite (unit + integration tests)
+
+### ✔ Documentation
+Full Tier 2 documentation is available at:
+
+```
+docs/index.md
+```
+
+---
+
 ## 📦 Features
 
+### Tier 2 Features (Current)
+- Difficulty‑based scoring system  
+- Category‑based word selection  
+- Configurable settings via `settings.json`  
+- High‑score saving and loading  
+- Logging system  
+- Modular architecture (UI, gameplay, persistence layers)  
+- Full pytest suite (unit + integration tests)
+
+### Tier 1 Features (Original)
 - Two difficulty levels (Normal & Advanced)  
 - Input validation (single letter, alphabet only, no repeats)  
-- Modular architecture with reusable functions  
 - Words loaded from external JSON file  
 - Fully documented with docstrings  
-- Pytest test suite (Tier 1 requirement)  
+- Initial pytest test suite   
 
 ---
 
@@ -31,19 +63,32 @@ This project is designed as a learning exercise in:
 project-root/
 │
 ├── src/
+│   ├── gameplay/
+│   ├── ui/
+│   ├── persistence/
 │   └── game.py
 │
 ├── data/
 │   └── words.json
 │
+├── config/
+│   └── settings.json
+│
+├── logs/
+│   └── game.log
+│
+├── docs/
+│   ├── index.md
+│   └── tier2/
+│       ├── scoring-design.md
+│       ├── config-structure.md
+│       └── logging-overview.md
+│
 ├── tests/
-│   ├── test_input_validation.py
-│   ├── test_word_selection.py
-│   └── test_display_update.py
+│   └── (unit + integration tests)
 │
 └── README.md
 ```
-
 
 ---
 
@@ -90,14 +135,16 @@ You will be prompted to:
 
 ## 🖼️ Screenshots
 
-### Game Startup
+### Tier 1 (Original Version)
 ![Game Startup](images/startup.png)
-
-### Gameplay Example
 ![Gameplay Example](images/gameplay.png)
-
-### Win Screen
 ![Win Screen](images/win.png)
+
+### Tier 2 (Current Version)
+![Tier 2 Menu](images/tier2_menu.png)
+![Category and difficulty selection](images/tier2_category&difficulty.png)  
+![Colour output](images/tier2_color.png)  
+![High‑score table](images/tier2_highscores.png)  
 
 ---
 
@@ -123,6 +170,14 @@ This project will evolve into:
 - A full MVC architecture  
 - Improved game loop  
 - Additional word packs  
+
+---
+
+## 📘 Documentation
+
+Full documentation for all tiers is available in:
+
+[docs/index.md](docs/index.md)
 
 ---
 

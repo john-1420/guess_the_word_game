@@ -1,0 +1,37 @@
+{
+    "default_difficulty": "normal",
+    "default_category": "animals",
+    "attempts": {
+        "easy": 12,
+        "normal": 10,
+        "hard": 8
+    },
+    "word_length": {
+        "easy": [
+            3,
+            5
+        ],
+        "normal": [
+            5,
+            7
+        ],
+        "hard": [
+            7,
+            10
+        ]
+    },
+    "hint_penalty": {
+        "easy": 7,
+        "normal": 4,
+        "hard": 3
+    },
+    "scoring": {
+        "difficulty_multiplier": {
+            "easy": 5,
+            "normal": 10,
+            "hard": 20
+        }
+    },
+    "colour_output": true,
+    "logging_level": "DEBUG"
+}
